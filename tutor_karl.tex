@@ -215,4 +215,84 @@
 \end{tikzpicture}
 
 % 添加文本
+% 在绘制路径的过程中添加 node 命令，node后接方括号括起来的属性描述和大括号括起来的文字
+% 文字的位置就在 node 前面的坐标位置
+\begin{tikzpicture}
+    \draw (0,0) rectangle (2,2);
+    \draw (0.5,0.5) node [fill=yellow!80!black]{Text at \verb!node 1!}
+            -- (1.5,1.5) node {Text at \verb!node 2!};
+\end{tikzpicture}
+% 还可以指定node的锚点（south, north, east, west），指定之后，锚点会和坐标位置对齐
+% 注意：这里不是说node位于坐标的哪个方位，而是node的东南西北中部位作为
+% 锚点和坐标对齐。当把node的north指定为锚点后，整个node是在坐标的南边的。
+% 可以多个方向组合
+\begin{tikzpicture}
+    \draw (0,0) node [fill=yellow!80!black]{T};
+    \draw (0,1) node[anchor=south] [fill=yellow!80!black]{T}
+    -- (1,0) node[anchor=west] [fill=yellow!80!black]{T}
+    -- (0,-1) node[anchor=north] [fill=yellow!80!black]{T}
+    -- (-1,0) node[anchor=east] [fill=yellow!80!black]{T} --cycle;
+\end{tikzpicture}
+% 指定锚点的方式有点反直觉，因此tizk也提供了另外一种指定方式
+% 就是说明node位于坐标的哪个方位（above， below， right， left），
+% 更进一步，这种方式还可以提供各个方位的位移。
+% 可以多个方向组合
+\begin{tikzpicture}
+    \draw (0,0) node [fill=yellow!80!black]{T};
+    \draw (0,1) node[above=5pt] [fill=yellow!80!black]{T}
+    -- (1,0) node[right=10pt] [fill=yellow!80!black]{T}
+    -- (0,-1) node[below=15pt, right=15pt] [fill=yellow!80!black]{T}
+    -- (-1,0) node[left=20pt] [fill=yellow!80!black]{T} --cycle;
+\end{tikzpicture}
+
+% 另一个例子
+\begin{tikzpicture}[scale=3]
+    \clip (-0.6,-0.2) rectangle (0.6,1.51);
+    \draw[step=.5cm,help lines] (-1.4,-1.4) grid (1.4,1.4);
+    \filldraw[fill=green!20,draw=green!50!black] (0,0) -- (3mm,0mm)
+    arc [start angle=0, end angle=30, radius=3mm] -- cycle;
+    \draw[->] (-1.5,0) -- (1.5,0); \draw[->] (0,-1.5) -- (0,1.5);
+    \draw (0,0) circle [radius=1cm];
+    \foreach \x in {-1,-0.5,1}
+    \draw (\x cm,1pt) -- (\x cm,-1pt) node[anchor=north] {$\x$};
+    \foreach \y in {-1,-0.5,0.5,1}
+    \draw (1pt,\y cm) -- (-1pt,\y cm) node[anchor=east] {$\y$};
+\end{tikzpicture}
+% 在上面的例子中，使用循环变量既作为数值描述了坐标位置，又作为文字显示出来
+% 有时希望能显示数学表达式而不是数值，比如0.5想显示成\frac{1}{2}，更有甚者，
+% 可能想显示\Pi，对于这类数学表达式，tikz并不能理解其含义，这些表达式不能作为
+% 数值来描述坐标，只能作为文本显示出来，因此需要同时能描述位置的数值和对应的文本，
+% foreach支持二元组形式的循环变量，\v1 / \v2，用斜线分隔，与此同时，
+% 循环列表中元素也需要是\v1 / \v2的形式，在循环过程中列表中的二元组会对应的赋值给
+% 循环变量二元组，如果列表中某个元素只有一个值，那这个值既当做\v1用也当做\v2用。
+% 在下面的例子中就是一个变量放数值，一个变量放文本
+\begin{tikzpicture}[scale=3]
+    \clip (-0.6,-0.2) rectangle (0.6,1.51);
+    \draw[step=.5cm,help lines] (-1.4,-1.4) grid (1.4,1.4);
+    \filldraw[fill=green!20,draw=green!50!black] (0,0) -- (3mm,0mm)
+    arc [start angle=0, end angle=30, radius=3mm] -- cycle;
+    \draw[->] (-1.5,0) -- (1.5,0); \draw[->] (0,-1.5) -- (0,1.5);
+    \draw (0,0) circle [radius=1cm];
+    \foreach \x/\xtext in {-1, -0.5/-\frac{1}{2}, 1}
+    \draw (\x cm,1pt) -- (\x cm,-1pt) node[anchor=north] {$\xtext$};
+    \foreach \y/\ytext in {-1, -0.5/-\frac{1}{2}, 0.5/\frac{1}{2}, 1}
+    \draw (1pt,\y cm) -- (-1pt,\y cm) node[anchor=east, fill=blue] {$\ytext$};
+\end{tikzpicture}
+% 除了把node接在坐标位置后之外，还能把node放在--线和坐标位置之间，表示node
+% 将被绘制在线中间，sloped表示让文字贴着线
+\begin{tikzpicture}
+    \draw (0, 0) -- node[sloped]{in the middle of the line} (5, 5);
+\end{tikzpicture}
+% 另外一个线上文字的例子，这里是把node放在了..和坐标位置之间，道理一样的
+% 除此之外还有一些文字在线上的位置属性设置
+\begin{tikzpicture}
+    \draw (0,0) .. controls (6,1) and (9,1) ..
+    node[near start,sloped,above] {near start}
+    node {midway}
+    node[very near end,sloped,below] {very near end} (12,0);
+\end{tikzpicture}
+
+% pic 可以理解为预定义的子图形，可以像node一样可以插入
+% 具体语法待补充
+
 \end{document}

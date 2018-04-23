@@ -279,9 +279,10 @@
     \draw (1pt,\y cm) -- (-1pt,\y cm) node[anchor=east, fill=blue] {$\ytext$};
 \end{tikzpicture}
 % 除了把node接在坐标位置后之外，还能把node放在--线和坐标位置之间，表示node
-% 将被绘制在线中间，sloped表示让文字贴着线
+% 将被绘制在线中间，sloped表示让文字贴着线，auto表示文字不在线上面，而是在
+% 线的两侧
 \begin{tikzpicture}
-    \draw (0, 0) -- node[sloped]{in the middle of the line} (5, 5);
+    \draw (0, 0) -- node[auto, sloped]{in the middle of the line} (5, 5);
 \end{tikzpicture}
 % 另外一个线上文字的例子，这里是把node放在了..和坐标位置之间，道理一样的
 % 除此之外还有一些文字在线上的位置属性设置
